@@ -7,7 +7,7 @@ Thanks to dysath/denngarr for writing the original plugin. Development has been 
 
 See the instruction over at the [seat documentation](https://eveseat.github.io/docs/community_packages/).
 
-The package name is `recursivetree/seat-billing`.
+The package name is `deirdrelear/seat-billing`.
 
 You should schedule a job running `billing:update` once at the beginning of a new month. 
 It will finish the bill for the last month.
