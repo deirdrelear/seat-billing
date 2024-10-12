@@ -52,6 +52,18 @@ Route::group([
         'uses' => 'BillingController@getUserBillByCharacter',
         'middleware' => 'can:billing.view'
     ]);
+
+    Route::get('/discount-settings', [
+        'as'   => 'billing.discount.settings',
+        'uses' => 'DiscountSettingsController@index',
+        'middleware' => 'can:billing.settings'
+    ]);
+    
+    Route::post('/discount-settings', [
+        'as'   => 'billing.discount.settings.update',
+        'uses' => 'DiscountSettingsController@update',
+        'middleware' => 'can:billing.settings'
+    ]);
 });
 
 Route::group([

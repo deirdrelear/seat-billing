@@ -7,6 +7,7 @@ use Denngarr\Seat\Billing\Helpers\BillingHelper;
 use Denngarr\Seat\Billing\Models\CharacterBill;
 use Denngarr\Seat\Billing\Models\CorporationBill;
 use Denngarr\Seat\Billing\Models\TaxInvoice;
+use Denngarr\Seat\Billing\Helpers\DiscountHelper;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,7 +17,7 @@ use Seat\Eveapi\Models\Corporation\CorporationInfo;
 
 class UpdateBills implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, BillingHelper;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, BillingHelper, DiscountHelper;
 
     private $force;
     private $year;
@@ -119,6 +120,17 @@ class UpdateBills implements ShouldQueue
                         $bill->mining_taxrate = 0;//legacy
                         $bill->user_id = $character["user_id"];
                         $bill->tax_invoice_id = $bill->tax_invoice_id ?? null; // keep the old invoice ID, or there will be duplicate invoices
+                        
+                        // Расчет скидки
+                        if ($character['user_id']) {
+                            $discount = $this->calculateDiscount($character['id'], $character['user_id'], $year, $month);
+                            $bill->discount_percent = $discount;
+                            $bill->mining_tax = $bill->mining_tax * (1 - $discount / 100);
+                            $bill->pve_tax = $bill->pve_tax * (1 - $discount / 100);
+                        } else {
+                            $bill->discount_percent = 0;
+                        }
+
                         $bill->save();
                     }
                 }

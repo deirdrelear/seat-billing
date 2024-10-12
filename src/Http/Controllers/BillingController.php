@@ -35,7 +35,9 @@ class BillingController extends Controller
            return sprintf('%s -> %s',$corp->receiver_corporation->name, $corp->substitute_corporation->name);
         })->toArray());
 
-        return view('billing::settings', compact("ore_tax","whitelist", "tax_receiver_corps"));
+        $discount_settings_url = route('billing.discount.settings');
+
+        return view('billing::settings', compact("ore_tax", "whitelist", "tax_receiver_corps", "discount_settings_url"));
     }
 
     const ALLOWED_PRICE_SOURCES = ["sell_price","buy_price","adjusted_price","average_price"];

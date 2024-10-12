@@ -34,6 +34,13 @@ return [
                 'route' => 'tax.corporationSelectionPage',
                 'permission'=>'billing.tax_manager',
             ],
+            [
+                'name' => 'Настройки скидок',
+                'icon' => 'fas fa-percentage',
+                'route_segment' => 'discount-settings',
+                'route' => 'billing.discount.settings',
+                'permission' => 'billing.view'
+            ],
         ],
     ],
 ];

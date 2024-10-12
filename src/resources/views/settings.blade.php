@@ -284,6 +284,11 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label for="discountSettings">Настройки скидок</label>
+                    <a href="{{ $discount_settings_url }}" class="btn btn-primary">Настроить скидки</a>
+                </div>
+                
             </div>
 
             <div class="card-footer">
