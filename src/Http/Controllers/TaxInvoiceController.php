@@ -54,9 +54,9 @@ class TaxInvoiceController extends Controller
         $user = auth()->user();
         
         $characterIds = $user->characters->pluck('character_id')->toArray();
-        $corporationIds = RefreshToken::whereIn('character_id', $characterIds)
-            ->join('character_infos', 'refresh_tokens.character_id', '=', 'character_infos.character_id')
-            ->pluck('character_infos.corporation_id')
+        $corporationIds = RefreshToken::whereIn('refresh_tokens.character_id', $characterIds)
+            ->join('character_affiliations', 'refresh_tokens.character_id', '=', 'character_affiliations.character_id')
+            ->pluck('character_affiliations.corporation_id')
             ->unique()
             ->toArray();
     
