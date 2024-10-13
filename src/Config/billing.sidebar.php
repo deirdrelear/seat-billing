@@ -34,12 +34,18 @@ return [
                 'route' => 'tax.corporationSelectionPage',
                 'permission'=>'billing.tax_manager',
             ],
-            [
+            'discount_settings' => [
                 'name' => 'Discount Settings',
                 'icon' => 'fas fa-percentage',
                 'route_segment' => 'discount-settings',
                 'route' => 'billing.discount.settings',
                 'permission' => 'billing.settings'
+            ],
+            'moondrills' => [
+                'name' => 'Moon Drills',
+                'icon' => 'fas fa-moon',
+                'route' => 'billing.moondrills',
+                'permission' => 'billing.view',
             ],
         ],
     ],

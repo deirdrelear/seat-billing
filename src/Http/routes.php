@@ -64,6 +64,11 @@ Route::group([
         'uses' => 'DiscountSettingsController@update',
         'middleware' => 'can:billing.settings'
     ]);
+    Route::get('/moondrills', [
+        'as' => 'billing.moondrills',
+        'uses' => 'MoonDrillController@index',
+        'middleware' => 'can:billing.view'
+    ]);
 });
 
 Route::group([
