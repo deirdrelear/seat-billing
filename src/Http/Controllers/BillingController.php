@@ -162,7 +162,7 @@ class BillingController extends Controller
         $user = auth()->user();
         
         $characterIds = $user->characters->pluck('character_id')->toArray();
-        $corporationIds = RefreshToken::whereIn('character_id', $characterIds)
+        $corporationIds = RefreshToken::whereIn('refresh_tokens.character_id', $characterIds)
             ->join('character_affiliations', 'refresh_tokens.character_id', '=', 'character_affiliations.character_id')
             ->pluck('character_affiliations.corporation_id')
             ->unique()
