@@ -157,9 +157,12 @@ class BillingController extends Controller
 
     public function showCurrentBill()
     {
+        \Log::info('showCurrentBill method called');
         $year = date('Y');
         $month = date('n');
         $user = auth()->user();
+        
+        \Log::info('User ID: ' . $user->id);
         
         $characterIds = $user->characters->pluck('character_id')->toArray();
         \Log::info('Character IDs: ' . json_encode($characterIds));
@@ -176,8 +179,8 @@ class BillingController extends Controller
 
     public function showBill($year, $month, $corporationIds)
     {
-        \Log::info("showBill called with year: $year, month: $month, corporationIds: " . json_encode($corporationIds));
-        
+        \Log::info('showBill method called');
+        \Log::info("Year: $year, Month: $month, Corporation IDs: " . json_encode($corporationIds));
         $stats = CorporationBill::with('corporation.alliance')
             ->where("month", $month)
             ->where("year", $year)
