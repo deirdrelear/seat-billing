@@ -216,10 +216,11 @@ class BillingController extends Controller
     {
         $year = date('Y');
         $month = date('n');
+        $force = true;
     
-        \Log::info("Updating bills for year: $year, month: $month");
+        \Log::info("Updating bills for year: $year, month: $month, force: $force");
     
-        dispatch(new UpdateBills($year, $month));
+        dispatch(new UpdateBills($force, $year, $month));
     }
 
     private function getUserBillByUserId($user){
