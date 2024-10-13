@@ -35,11 +35,11 @@ return [
                 'permission'=>'billing.tax_manager',
             ],
             [
-                'name' => 'Настройки скидок',
+                'name' => 'Discount Settings',
                 'icon' => 'fas fa-percentage',
                 'route_segment' => 'discount-settings',
                 'route' => 'billing.discount.settings',
-                'permission' => 'billing.view'
+                'permission' => 'billing.settings'
             ],
         ],
     ],
