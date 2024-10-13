@@ -47,10 +47,29 @@ class TaxInvoiceController extends Controller
         return redirect()->back()->with("success",trans("billing::tax.overpayment_balancing_scheduled"));
     }
 
-    public function corporationSelectionPage(){
-        $corporation_ids = TaxInvoice::select("receiver_corporation_id")->distinct()->pluck("receiver_corporation_id");
-        $corporations = CorporationInfo::whereIn("corporation_id", $corporation_ids)->get();
-
+    public function corporationSelectionPage()
+    {
+        $user = auth()->user();
+        
+        $characterIds = $user->characters->pluck('character_id')->toArray();
+        $allianceIds = RefreshToken::whereIn('character_id', $characterIds)
+            ->join('corporation_infos', 'refresh_tokens.corporation_id', '=', 'corporation_infos.corporation_id')
+            ->whereNotNull('corporation_infos.alliance_id')
+            ->pluck('corporation_infos.alliance_id')
+            ->unique()
+            ->toArray();
+    
+        $corporation_ids = CorporationInfo::whereIn('alliance_id', $allianceIds)
+            ->pluck('corporation_id');
+    
+        $corporations = CorporationInfo::whereIn("corporation_id", $corporation_ids)
+            ->whereIn("corporation_id", function($query) {
+                $query->select("receiver_corporation_id")
+                      ->from("seat_billing_tax_invoices")
+                      ->distinct();
+            })
+            ->get();
+    
         return view("billing::tax.corporationList", compact("corporations"));
     }
 
