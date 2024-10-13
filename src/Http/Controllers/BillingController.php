@@ -12,6 +12,7 @@ use ErrorException;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Seat\Eveapi\Models\Corporation\CorporationInfo;
+use Seat\Eveapi\Models\Character\CharacterInfo;
 use Seat\Eveapi\Models\RefreshToken;
 use Seat\Web\Http\Controllers\Controller;
 use Denngarr\Seat\Billing\Helpers\BillingHelper;
@@ -162,7 +163,8 @@ class BillingController extends Controller
         
         $characterIds = $user->characters->pluck('character_id')->toArray();
         $corporationIds = RefreshToken::whereIn('character_id', $characterIds)
-            ->join('corporation_infos', 'refresh_tokens.corporation_id', '=', 'corporation_infos.corporation_id')
+            ->join('character_infos', 'refresh_tokens.character_id', '=', 'character_infos.character_id')
+            ->join('corporation_infos', 'character_infos.corporation_id', '=', 'corporation_infos.corporation_id')
             ->pluck('corporation_infos.corporation_id')
             ->unique()
             ->toArray();

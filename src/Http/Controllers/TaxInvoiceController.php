@@ -11,6 +11,7 @@ use Seat\Eveapi\Models\Corporation\CorporationInfo;
 use Seat\Web\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Seat\Web\Models\User;
+use Seat\Eveapi\Models\RefreshToken;
 
 class TaxInvoiceController extends Controller
 {
