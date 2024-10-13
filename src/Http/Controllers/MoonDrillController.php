@@ -20,12 +20,17 @@ class MoonDrillController extends Controller
             ->pluck('corporation_id')
             ->unique()
             ->toArray();
-
-        $structures = CorporationStructure::with('corporation')
-            ->whereIn('corporation_id', $corporationIds)
+    
+        $structures = CorporationStructure::whereIn('corporation_id', $corporationIds)
             ->where('type_id', 81826) // Metenox Moon Drill
             ->get();
-
-        return view('billing::moondrills', compact('structures'));
+    
+        $structuresWithCorporations = $structures->map(function ($structure) {
+            $corporation = CorporationInfo::find($structure->corporation_id);
+            $structure->corporation = $corporation;
+            return $structure;
+        });
+    
+        return view('billing::moondrills', compact('structuresWithCorporations'));
     }
 }
