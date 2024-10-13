@@ -8,6 +8,7 @@ use Denngarr\Seat\Billing\Jobs\GenerateInvoices;
 use Denngarr\Seat\Billing\Models\TaxInvoice;
 use Illuminate\Support\Facades\DB;
 use Seat\Eveapi\Models\Corporation\CorporationInfo;
+use Seat\Eveapi\Models\Character\CharacterInfo;
 use Seat\Web\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Seat\Web\Models\User;
@@ -53,15 +54,21 @@ class TaxInvoiceController extends Controller
         $user = auth()->user();
         
         $characterIds = $user->characters->pluck('character_id')->toArray();
-        $allianceIds = RefreshToken::whereIn('character_id', $characterIds)
-            ->join('corporation_infos', 'refresh_tokens.corporation_id', '=', 'corporation_infos.corporation_id')
-            ->whereNotNull('corporation_infos.alliance_id')
-            ->pluck('corporation_infos.alliance_id')
+        $corporationIds = RefreshToken::whereIn('character_id', $characterIds)
+            ->join('character_infos', 'refresh_tokens.character_id', '=', 'character_infos.character_id')
+            ->pluck('character_infos.corporation_id')
+            ->unique()
+            ->toArray();
+    
+        $allianceIds = CorporationInfo::whereIn('corporation_id', $corporationIds)
+            ->whereNotNull('alliance_id')
+            ->pluck('alliance_id')
             ->unique()
             ->toArray();
     
         $corporation_ids = CorporationInfo::whereIn('alliance_id', $allianceIds)
-            ->pluck('corporation_id');
+            ->pluck('corporation_id')
+            ->toArray();
     
         $corporations = CorporationInfo::whereIn("corporation_id", $corporation_ids)
             ->whereIn("corporation_id", function($query) {
