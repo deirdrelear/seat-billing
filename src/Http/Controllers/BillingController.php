@@ -181,6 +181,7 @@ class BillingController extends Controller
     {
         \Log::info('showBill method called');
         \Log::info("Year: $year, Month: $month, Corporation IDs: " . json_encode($corporationIds));
+
         $stats = CorporationBill::with('corporation.alliance')
             ->where("month", $month)
             ->where("year", $year)
@@ -200,6 +201,25 @@ class BillingController extends Controller
 
     public function getUserBillByCharacter($character_id){
         return $this->getUserBillByUserId(RefreshToken::find($character_id)->user);
+    }
+
+    public function refreshBillingData()
+    {
+        \Log::info('Refreshing billing data');
+    
+        $this->updateBills();
+    
+        return redirect()->route('billing.current')->with('success', 'Billing data has been refreshed.');
+    }
+
+    private function updateBills()
+    {
+        $year = date('Y');
+        $month = date('n');
+    
+        \Log::info("Updating bills for year: $year, month: $month");
+    
+        dispatch(new UpdateBills($year, $month));
     }
 
     private function getUserBillByUserId($user){

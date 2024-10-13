@@ -69,6 +69,11 @@ Route::group([
         'uses' => 'MoonDrillController@index',
         'middleware' => 'can:billing.view'
     ]);
+    Route::get('/refresh', [
+        'as' => 'billing.refresh',
+        'uses' => 'BillingController@refreshBillingData',
+        'middleware' => 'can:billing.view'
+    ]);
 });
 
 Route::group([

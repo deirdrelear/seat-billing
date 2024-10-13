@@ -25,6 +25,7 @@
                 <input type="hidden" name="month" value="{{ $month }}">
                 <button type="submit" class="btn btn-warning confirmform" data-seat-action="recalculate the bills for {{$year}}-{{$month}}? Recalculating on old data might lead to different results. Old results can't be restored. Continue">Recalculate Bill</button>
             </form>
+            <a href="{{ route('billing.refresh') }}" class="btn btn-primary">Refresh Billing Data</a>
         </li>
     </ul>
 
