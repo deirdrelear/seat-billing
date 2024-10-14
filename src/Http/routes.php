@@ -73,10 +73,7 @@ Route::group([
         'as' => 'billing.refresh',
         'uses' => 'BillingController@refreshBillingData',
         'middleware' => 'can:billing.view'
-    ])->middleware(function ($request, $next) {
-        Log::info('Billing refresh route accessed');
-        return $next($request);
-    });
+    ]);
 });
 
 Route::group([
