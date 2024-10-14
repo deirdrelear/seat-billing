@@ -159,33 +159,22 @@ class BillingController extends Controller
     {
         $year = date('Y');
         $month = date('n');
-        $user = auth()->user();
-             
-        $characterIds = $user->characters->pluck('character_id')->toArray();
-        
-        $corporationIds = RefreshToken::whereIn('refresh_tokens.character_id', $characterIds)
-            ->join('character_affiliations', 'refresh_tokens.character_id', '=', 'character_affiliations.character_id')
-            ->pluck('character_affiliations.corporation_id')
-            ->unique()
-            ->toArray();
-    
-        return $this->showBill($year, $month, $corporationIds);
+
+        return $this->showBill($year, $month);
     }
 
-    public function showBill($year, $month, $corporationIds)
+    public function showBill($year, $month)
     {
-        $stats = CorporationBill::with('corporation.alliance')
+
+        $stats =  CorporationBill::with('corporation.alliance')
             ->where("month", $month)
             ->where("year", $year)
-            ->whereIn('corporation_id', $corporationIds)
             ->get();
-        
         $dates = $this->getCorporationBillingMonths();
 
-        dump($stats->toArray(), $dates, $year, $month);
-    
         return view('billing::bill', compact('stats', 'dates', 'year', 'month'));
     }
+
 
     public function getUserBill(){
         return $this->getUserBillByUserId(auth()->user());
