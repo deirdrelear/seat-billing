@@ -209,7 +209,7 @@ class BillingController extends Controller
     
         $this->updateBills();
     
-        return redirect()->route('billing.current')->with('success', 'Billing data has been refreshed.');
+        return redirect()->route('billing.view')->with('success', 'Billing data has been refreshed.');
     }
 
     private function updateBills()
