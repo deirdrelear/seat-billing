@@ -46,9 +46,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php
-                                dump($stats);
-                            @endphp
+                            <tr>
+                                <td colspan="4">
+                                    <pre>{{ print_r($stats->toArray(), true) }}</pre>
+                                </td>
+                            </tr>
                             @if($stats->isNotEmpty())
                                 @foreach($stats as $row)
                                     <tr>
