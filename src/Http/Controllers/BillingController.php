@@ -11,7 +11,6 @@ use Denngarr\Seat\Billing\Models\TaxReceiverCorporation;
 use ErrorException;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Seat\Eveapi\Models\Corporation\CorporationInfo;
 use Seat\Eveapi\Models\Character\CharacterInfo;
 use Seat\Eveapi\Models\RefreshToken;
@@ -158,40 +157,32 @@ class BillingController extends Controller
 
     public function showCurrentBill()
     {
-        Log::info('showCurrentBill method called');
         $year = date('Y');
         $month = date('n');
         $user = auth()->user();
-        
-        Log::info('User ID: ' . $user->id);
-        
+             
         $characterIds = $user->characters->pluck('character_id')->toArray();
-        Log::info('Character IDs: ' . json_encode($characterIds));
         
         $corporationIds = RefreshToken::whereIn('refresh_tokens.character_id', $characterIds)
             ->join('character_affiliations', 'refresh_tokens.character_id', '=', 'character_affiliations.character_id')
             ->pluck('character_affiliations.corporation_id')
             ->unique()
             ->toArray();
-        Log::info('Corporation IDs: ' . json_encode($corporationIds));
     
         return $this->showBill($year, $month, $corporationIds);
     }
 
     public function showBill($year, $month, $corporationIds)
     {
-        Log::info('showBill method called');
-        Log::info("Year: $year, Month: $month, Corporation IDs: " . json_encode($corporationIds));
-
         $stats = CorporationBill::with('corporation.alliance')
             ->where("month", $month)
             ->where("year", $year)
             ->whereIn('corporation_id', $corporationIds)
             ->get();
-        Log::info('Stats: ' . json_encode($stats));
         
         $dates = $this->getCorporationBillingMonths();
-        Log::info('Dates: ' . json_encode($dates));
+
+        dump($stats->toArray(), $dates, $year, $month);
     
         return view('billing::bill', compact('stats', 'dates', 'year', 'month'));
     }
@@ -206,11 +197,9 @@ class BillingController extends Controller
 
     public function refreshBillingData()
     {
-        Log::info('refreshBillingData method called');
         
         try {
             $this->updateBills();
-            Log::info('Bills updated successfully');
         } catch (\Exception $e) {
             Log::error('Error updating bills: ' . $e->getMessage());
         }
