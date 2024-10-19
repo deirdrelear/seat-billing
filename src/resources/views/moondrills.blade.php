@@ -9,34 +9,15 @@
             <h3 class="card-title">Metenox Moon Drills</h3>
         </div>
         <div class="card-body">
-            <table class="table table-striped" id="moondrills-table">
-                <thead>
-                    <tr>
-                        <th>Structure ID</th>
-                        <th>Corporation ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($structures as $structure)
-                        <tr>
-                            <td>{{ $structure->structure_id }}</td>
-                            <td>{{ $structure->corporation_id }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="2">Нет доступных структур</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            @if($structures->isNotEmpty())
+                <ul>
+                @foreach($structures as $structure)
+                    <li>Structure ID: {{ $structure->structure_id }}, Corporation ID: {{ $structure->corporation_id }}</li>
+                @endforeach
+                </ul>
+            @else
+                <p>Нет доступных структур</p>
+            @endif
         </div>
     </div>
 @endsection
-
-@push('javascript')
-<script>
-    $(document).ready(function() {
-        $('#moondrills-table').DataTable();
-    });
-</script>
-@endpush
