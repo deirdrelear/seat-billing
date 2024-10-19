@@ -11,26 +11,26 @@ class MoonDrillController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        
-        $characterIds = $user->characters->pluck('character_id')->toArray();
-        
-        $corporationIds = DB::table('corporation_members')
-            ->whereIn('character_id', $characterIds)
-            ->pluck('corporation_id')
-            ->unique()
-            ->toArray();
+        try {
+            $user = auth()->user();
+            
+            $characterIds = $user->characters->pluck('character_id')->toArray();
+            
+            $corporationIds = DB::table('corporation_members')
+                ->whereIn('character_id', $characterIds)
+                ->pluck('corporation_id')
+                ->unique()
+                ->toArray();
     
-        $structures = CorporationStructure::whereIn('corporation_id', $corporationIds)
-            ->where('type_id', 81826) // Metenox Moon Drill
-            ->get();
+            $structures = CorporationStructure::with('corporation')
+                ->whereIn('corporation_id', $corporationIds)
+                ->where('type_id', 81826) // Metenox Moon Drill
+                ->get();
     
-        $structuresWithCorporations = $structures->map(function ($structure) {
-            $corporation = CorporationInfo::find($structure->corporation_id);
-            $structure->corporation = $corporation;
-            return $structure;
-        });
-    
-        return view('billing::moondrills', compact('structuresWithCorporations'));
+            return view('billing::moondrills', compact('structures'));
+        } catch (\Exception $e) {
+            \Log::error('Error in MoonDrillController: ' . $e->getMessage());
+            return response()->view('errors.500', [], 500);
+        }
     }
 }
