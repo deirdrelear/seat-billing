@@ -159,11 +159,11 @@ class BillingController extends Controller
     {
         $year = date('Y');
         $month = date('n');
-
-        return $this->showBill($year, $month);
+    
+        return $this->showBill($year, $month, true);
     }
 
-    public function showBill($year, $month)
+    public function showBill($year, $month, $filterByDate = false)
     {
         $user = auth()->user();
         $characterIds = $user->characters->pluck('character_id')->toArray();
@@ -174,12 +174,17 @@ class BillingController extends Controller
             ->unique()
             ->toArray();
     
-        $stats = CorporationBill::with('corporation.alliance')
-            ->whereIn('corporation_id', $corporationIds)
-            ->orderBy('year', 'desc')
-            ->orderBy('month', 'desc')
-            ->limit(10)
-            ->get();
+        $query = CorporationBill::with('corporation.alliance')
+            ->whereIn('corporation_id', $corporationIds);
+    
+        if ($filterByDate) {
+            $query->where('year', $year)->where('month', $month);
+        } else {
+            $query->orderBy('year', 'desc')->orderBy('month', 'desc')->limit(10);
+        }
+    
+        $stats = $query->get();
+    
     
         $dates = $this->getCorporationBillingMonths();
     
