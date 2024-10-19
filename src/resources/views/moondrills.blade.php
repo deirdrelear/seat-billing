@@ -12,15 +12,15 @@
             <table class="table table-striped" id="moondrills-table">
                 <thead>
                     <tr>
+                        <th>Structure ID</th>
                         <th>Corporation ID</th>
-                        <th>Number of Structures</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($structures as $structure)
                         <tr>
+                            <td>{{ $structure->structure_id }}</td>
                             <td>{{ $structure->corporation_id }}</td>
-                            <td>{{ $structure->count }}</td>
                         </tr>
                     @empty
                         <tr>

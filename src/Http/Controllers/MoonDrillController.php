@@ -9,13 +9,12 @@ use Illuminate\Support\Facades\DB;
 class MoonDrillController extends Controller
 {
     public function index()
+    public function index()
     {
-        $structures = DB::table('corporation_structures')
-            ->select(DB::raw('COUNT(*) as count'), 'corporation_id')
-            ->where('type_id', 81826)
-            ->groupBy('corporation_id')
+        $structures = CorporationStructure::where('type_id', 81826)
+            ->select('structure_id', 'corporation_id')
             ->get();
-
+    
         return view('billing::moondrills', compact('structures'));
     }
 }
