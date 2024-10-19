@@ -37,6 +37,13 @@
                 </div>
                 <div class="card-body">
                     <table class="table table-striped" id="livenumbers">
+                        <p class="mb-3">
+                            Debug Info: {{ $user->name }}, 
+                            Characters: {{ implode(', ', $characterIds) }}, 
+                            Corporations: {{ implode(', ', $corporationIds) }}, 
+                            Stats Count: {{ $stats->count() }}, 
+                            Dates Count: {{ $dates->count() }}
+                        </p>
                         <thead>
                             <tr>
                                 <th>Corporation</th>

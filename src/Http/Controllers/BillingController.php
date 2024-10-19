@@ -182,7 +182,8 @@ class BillingController extends Controller
     
         $dates = $this->getCorporationBillingMonths();
     
-        return view('billing::bill', compact('stats', 'dates', 'year', 'month'));
+        //return view('billing::bill', compact('stats', 'dates', 'year', 'month'));
+        return view('billing::bill', compact('stats', 'dates', 'year', 'month', 'user', 'characterIds', 'corporationIds'));
     }
 
 
