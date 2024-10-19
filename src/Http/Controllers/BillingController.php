@@ -171,8 +171,15 @@ class BillingController extends Controller
         $user = auth()->user();
         $characterIds = $user->characters->pluck('character_id')->toArray();
         
-        $query = CharacterBill::with(['character', 'corporation'])
-            ->whereIn('character_id', $characterIds);
+        $corporationIds = RefreshToken::whereIn('refresh_tokens.character_id', $characterIds)
+            ->join('character_affiliations', 'refresh_tokens.character_id', '=', 'character_affiliations.character_id')
+            ->pluck('character_affiliations.corporation_id')
+            ->unique()
+            ->toArray();
+        
+        $query = CorporationBill::with(['corporation:corporation_id,name', 'corporation.alliance:alliance_id,name'])
+            ->select('corporation_id', 'mining_total', 'mining_tax', 'pve_total', 'pve_tax')
+            ->whereIn('corporation_id', $corporationIds);
         
         if ($filterByDate) {
             $query->where('year', $year)->where('month', $month);
@@ -180,37 +187,28 @@ class BillingController extends Controller
             $query->orderBy('year', 'desc')->orderBy('month', 'desc');
         }
         
-        $bills = $query->get();
-        
-        $stats = $bills->groupBy('corporation_id')->map(function ($corporationBills) {
-            $corporation = $corporationBills->first()->corporation;
-            return (object)[
-                'corporation' => $corporation,
-                'alliance' => $corporation->alliance,
-                'mining_total' => $corporationBills->sum('mining_total'),
-                'mining_tax' => $corporationBills->sum('mining_tax'),
-                'pve_total' => $corporationBills->sum('pve_total'),
-                'pve_tax' => $corporationBills->sum('pve_tax'),
-            ];
-        });
+        $stats = $query->get();
         
         if ($stats->isEmpty()) {
-            $stats = collect([(object)[
-                'corporation' => new CorporationInfo(['name' => 'Нет данных']),
-                'alliance' => null,
-                'mining_total' => 0,
-                'mining_tax' => 0,
-                'pve_total' => 0,
-                'pve_tax' => 0,
-                'corporation_id' => 0
-            ]]);
+            $stats = collect([
+                (object)[
+                    'corporation' => new CorporationInfo(['name' => 'Нет данных']),
+                    'alliance' => null,
+                    'mining_total' => 0,
+                    'mining_tax' => 0,
+                    'pve_total' => 0,
+                    'pve_tax' => 0,
+                    'corporation_id' => 0
+                ]
+            ]);
         }
         
         $dates = $this->getCorporationBillingMonths();
-    
+        
         $debugInfo = [
             'user' => $user->name,
             'characterIds' => implode(', ', $characterIds),
+            'corporationIds' => implode(', ', $corporationIds),
             'year' => $year,
             'month' => $month,
             'statsCount' => $stats->count(),
@@ -219,7 +217,7 @@ class BillingController extends Controller
                 return [
                     'corporation_id' => $stat->corporation->corporation_id ?? null,
                     'corporation_name' => $stat->corporation->name ?? 'N/A',
-                    'alliance_name' => $stat->alliance->name ?? 'N/A',
+                    'alliance_name' => $stat->corporation->alliance->name ?? 'N/A',
                     'mining_total' => $stat->mining_total,
                     'mining_tax' => $stat->mining_tax,
                     'pve_total' => $stat->pve_total,
