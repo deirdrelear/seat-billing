@@ -38,11 +38,14 @@
                 <div class="card-body">
                     <table class="table table-striped" id="livenumbers">
                         <p class="mb-3">
-                            Debug Info: {{ $user->name }}, 
-                            Characters: {{ implode(', ', $characterIds) }}, 
-                            Corporations: {{ implode(', ', $corporationIds) }}, 
-                            Stats Count: {{ $stats->count() }}, 
-                            Dates Count: {{ $dates->count() }}
+                            Debug Info: {{ $debugInfo['user'] }}, 
+                            Characters: {{ $debugInfo['characterIds'] }}, 
+                            Corporations: {{ $debugInfo['corporationIds'] }}, 
+                            Year: {{ $debugInfo['year'] }},
+                            Month: {{ $debugInfo['month'] }},
+                            Stats Count: {{ $debugInfo['statsCount'] }}, 
+                            Dates Count: {{ $debugInfo['datesCount'] }},
+                            Raw Stats: <pre>{{ json_encode($debugInfo['rawStats'], JSON_PRETTY_PRINT) }}</pre>
                         </p>
                         <thead>
                             <tr>

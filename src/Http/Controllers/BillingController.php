@@ -175,17 +175,27 @@ class BillingController extends Controller
             ->toArray();
     
         $stats = CorporationBill::with('corporation.alliance')
-            ->where("month", $month)
-            ->where("year", $year)
             ->whereIn('corporation_id', $corporationIds)
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->limit(10)
             ->get();
     
         $dates = $this->getCorporationBillingMonths();
     
-        //return view('billing::bill', compact('stats', 'dates', 'year', 'month'));
-        return view('billing::bill', compact('stats', 'dates', 'year', 'month', 'user', 'characterIds', 'corporationIds'));
+        $debugInfo = [
+            'user' => $user->name,
+            'characterIds' => implode(', ', $characterIds),
+            'corporationIds' => implode(', ', $corporationIds),
+            'year' => $year,
+            'month' => $month,
+            'statsCount' => $stats->count(),
+            'datesCount' => $dates->count(),
+            'rawStats' => $stats->toArray()
+        ];
+    
+        return view('billing::bill', compact('stats', 'dates', 'year', 'month', 'debugInfo'));
     }
-
 
     public function getUserBill(){
         return $this->getUserBillByUserId(auth()->user());
