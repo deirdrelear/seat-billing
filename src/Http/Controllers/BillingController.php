@@ -155,18 +155,18 @@ class BillingController extends Controller
         return $summary;
     }
 
-    public function showCurrentBill()
+    public function showCurrentBill(Request $request)
     {
         $year = date('Y');
         $month = date('n');
     
-        return $this->showBill($year, $month, true);
+        return $this->showBill($request, $year, $month, true);
     }
 
     public function showBill(Request $request, $year = null, $month = null, $filterByDate = false)
     {
-        $year = $year ?? $request->input('year', date('Y'));
-        $month = $month ?? $request->input('month', date('n'));
+        $year = $year !== null ? (int)$year : (int)$request->input('year', date('Y'));
+        $month = $month !== null ? (int)$month : (int)$request->input('month', date('n'));
         
         $user = auth()->user();
         $characterIds = $user->characters->pluck('character_id')->toArray();
