@@ -163,8 +163,11 @@ class BillingController extends Controller
         return $this->showBill($year, $month, true);
     }
 
-    public function showBill($year, $month, $filterByDate = false)
+    public function showBill(Request $request, $year = null, $month = null, $filterByDate = false)
     {
+        $year = $year ?? $request->input('year', date('Y'));
+        $month = $month ?? $request->input('month', date('n'));
+        
         $user = auth()->user();
         $characterIds = $user->characters->pluck('character_id')->toArray();
         
@@ -189,12 +192,13 @@ class BillingController extends Controller
         if ($stats->isEmpty()) {
             $stats = collect([
                 (object)[
-                    'corporation' => new CorporationInfo(['name' => 'No Data']),
+                    'corporation' => new CorporationInfo(['name' => 'Нет данных']),
                     'alliance' => null,
                     'mining_total' => 0,
                     'mining_tax' => 0,
                     'pve_total' => 0,
-                    'pve_tax' => 0
+                    'pve_tax' => 0,
+                    'corporation_id' => 0
                 ]
             ]);
         }

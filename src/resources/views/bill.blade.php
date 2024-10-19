@@ -29,6 +29,24 @@
         </li>
     </ul>
 
+    <div class="form-group">
+        <label for="month">Месяц:</label>
+        <select id="month" name="month" class="form-control">
+            @for($i = 1; $i <= 12; $i++)
+                <option value="{{ $i }}" {{ $i == $month ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
+            @endfor
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="year">Год:</label>
+        <select id="year" name="year" class="form-control">
+            @for($i = date('Y'); $i >= date('Y') - 5; $i--)
+                <option value="{{ $i }}" {{ $i == $year ? 'selected' : '' }}>{{ $i }}</option>
+            @endfor
+        </select>
+    </div>
+    <button id="updateStats" class="btn btn-primary">Обновить статистику</button>
+
     <div class="tab-content">
         <div class="tab-pane active" id="tab1">
             <div class="card">
@@ -56,20 +74,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if($stats->isNotEmpty())
-                            @foreach($stats as $row)
+                            @if($stats->isNotEmpty() && $stats->first()->corporation_id !== 0)
+                                @foreach($stats as $row)
+                                    <tr>
+                                        <td>{{ $row->corporation->name ?? 'N/A' }}</td>
+                                        <td>{{ $row->corporation->alliance->name ?? 'N/A' }}</td>
+                                        <td data-sort="{{ $row->mining_total ?? 0 }}">{{ number_format($row->mining_total ?? 0, 2) }}</td>
+                                        <td data-sort="{{ $row->mining_tax ?? 0 }}">{{ number_format($row->mining_tax ?? 0, 2) }}</td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <td>{{ $row->corporation->name ?? 'N/A' }}</td>
-                                    <td>{{ $row->corporation->alliance->name ?? 'N/A' }}</td>
-                                    <td data-sort="{{ $row->mining_total ?? 0 }}">{{ number_format($row->mining_total ?? 0, 2) }}</td>
-                                    <td data-sort="{{ $row->mining_tax ?? 0 }}">{{ number_format($row->mining_tax ?? 0, 2) }}</td>
+                                    <td colspan="4">Нет данных для отображения за выбранный период. Попробуйте выбрать другой месяц или год.</td>
                                 </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="4">Нет данных для отображения</td>
-                            </tr>
-                        @endif
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -94,7 +112,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if($stats->isNotEmpty())
+                            @if($stats->isNotEmpty() && $stats->first()->corporation_id !== 0)
                                 @foreach($stats as $row)
                                     <tr>
                                         <td>{{ $row->corporation->name ?? 'N/A' }}</td>
@@ -105,9 +123,10 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="4">Нет данных для отображения</td>
+                                    <td colspan="4">Нет данных для отображения за выбранный период. Попробуйте выбрать другой месяц или год.</td>
                                 </tr>
                             @endif
+                        </tbody>
                         </tbody>
                     </table>
                 </div>
@@ -230,5 +249,11 @@
             $('#livenumbers').DataTable();
             $('#livepve').DataTable();
         } );
+
+        $('#updateStats').click(function() {
+            var month = $('#month').val();
+            var year = $('#year').val();
+            window.location.href = '{{ route('billing.summary') }}?month=' + month + '&year=' + year;
+        });
     </script>
 @endpush
