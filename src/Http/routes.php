@@ -29,8 +29,14 @@ Route::group([
         'middleware' => 'can:billing.settings'
     ]);
 
-    Route::get('/past/{year}/{month}', [
+    Route::get('/past/{year?}/{month?}', [
         'as' => 'billing.pastbilling',
+        'uses' => 'BillingController@showBill',
+        'middleware' => 'can:billing.view'
+    ]);
+
+    Route::get('/past', [
+        'as' => 'billing.pastbilling.current',
         'uses' => 'BillingController@showBill',
         'middleware' => 'can:billing.view'
     ]);
