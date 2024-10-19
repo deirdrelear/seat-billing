@@ -174,18 +174,28 @@ class BillingController extends Controller
             ->unique()
             ->toArray();
     
-        $query = CorporationBill::with('corporation.alliance')
+            $query = CorporationBill::with('corporation.alliance')
             ->whereIn('corporation_id', $corporationIds);
-    
+        
         if ($filterByDate) {
             $query->where('year', $year)->where('month', $month);
         } else {
-            $query->orderBy('year', 'desc')->orderBy('month', 'desc')->limit(10);
+            $query->orderBy('year', 'desc')->orderBy('month', 'desc');
         }
-    
+        
         $stats = $query->get();
-    
-    
+        
+        if ($stats->isEmpty()) {
+            $stats = collect([
+                (object)[
+                    'corporation' => (object)['name' => 'No Data'],
+                    'alliance' => null,
+                    'mining_total' => 0,
+                    'mining_tax' => 0
+                ]
+            ]);
+        }
+        
         $dates = $this->getCorporationBillingMonths();
     
         $debugInfo = [

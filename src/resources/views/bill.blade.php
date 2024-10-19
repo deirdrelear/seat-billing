@@ -57,19 +57,19 @@
                         </thead>
                         <tbody>
                             @if($stats->isNotEmpty())
-                                @foreach($stats as $row)
-                                    <tr>
-                                        <td>@include("web::partials.corporation", ["corporation"=>$row->corporation])</td>
-                                        <td>@include("web::partials.alliance", ["alliance"=>$row->corporation->alliance])</td>
-                                        <td data-sort="{{$row->mining_total}}">{{ number_format($row->mining_total, 2) }}</td>
-                                        <td data-sort="{{$row->mining_tax}}">{{ number_format($row->mining_tax) }}</td>
-                                    </tr>
-                                @endforeach
-                            @else
+                            @foreach($stats as $row)
                                 <tr>
-                                    <td colspan="4">Нет данных для отображения</td>
+                                    <td>{{ $row->corporation->name ?? 'N/A' }}</td>
+                                    <td>{{ $row->corporation->alliance->name ?? 'N/A' }}</td>
+                                    <td data-sort="{{ $row->mining_total ?? 0 }}">{{ number_format($row->mining_total ?? 0, 2) }}</td>
+                                    <td data-sort="{{ $row->mining_tax ?? 0 }}">{{ number_format($row->mining_tax ?? 0) }}</td>
                                 </tr>
-                            @endif
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="4">Нет данных для отображения</td>
+                            </tr>
+                        @endif
                         </tbody>
                     </table>
                 </div>
