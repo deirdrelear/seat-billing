@@ -62,7 +62,7 @@
                                     <td>{{ $row->corporation->name ?? 'N/A' }}</td>
                                     <td>{{ $row->corporation->alliance->name ?? 'N/A' }}</td>
                                     <td data-sort="{{ $row->mining_total ?? 0 }}">{{ number_format($row->mining_total ?? 0, 2) }}</td>
-                                    <td data-sort="{{ $row->mining_tax ?? 0 }}">{{ number_format($row->mining_tax ?? 0) }}</td>
+                                    <td data-sort="{{ $row->mining_tax ?? 0 }}">{{ number_format($row->mining_tax ?? 0, 2) }}</td>
                                 </tr>
                             @endforeach
                         @else
@@ -95,19 +95,19 @@
                         </thead>
                         <tbody>
                             @if($stats->isNotEmpty())
-                            @foreach($stats as $row)
+                                @foreach($stats as $row)
+                                    <tr>
+                                        <td>{{ $row->corporation->name ?? 'N/A' }}</td>
+                                        <td>{{ $row->corporation->alliance->name ?? 'N/A' }}</td>
+                                        <td data-sort="{{ $row->pve_total ?? 0 }}">{{ number_format($row->pve_total ?? 0, 2) }}</td>
+                                        <td data-sort="{{ $row->pve_tax ?? 0 }}">{{ number_format($row->pve_tax ?? 0, 2) }}</td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <td>{{ $row->corporation->name ?? 'N/A' }}</td>
-                                    <td>{{ $row->corporation->alliance->name ?? 'N/A' }}</td>
-                                    <td data-sort="{{ $row->pve_total }}">{{ number_format($row->pve_total, 2) }}</td>
-                                    <td data-sort="{{ $row->pve_tax }}">{{ number_format($row->pve_tax, 2) }}</td>
+                                    <td colspan="4">Нет данных для отображения</td>
                                 </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="4">Нет данных для отображения</td>
-                            </tr>
-                        @endif
+                            @endif
                         </tbody>
                     </table>
                 </div>
