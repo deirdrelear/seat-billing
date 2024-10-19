@@ -253,7 +253,7 @@
         $('#updateStats').click(function() {
             var month = $('#month').val();
             var year = $('#year').val();
-            window.location.href = '{{ route('billing.summary') }}?month=' + month + '&year=' + year;
+            window.location.href = '{{ route('billing.pastbilling') }}/' + year + '/' + month;
         });
     </script>
 @endpush
