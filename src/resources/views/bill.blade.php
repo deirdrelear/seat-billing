@@ -95,19 +95,19 @@
                         </thead>
                         <tbody>
                             @if($stats->isNotEmpty())
-                                @foreach($stats as $row)
-                                    <tr>
-                                        <td>@include("web::partials.corporation", ["corporation"=>$row->corporation])</td>
-                                        <td>@include("web::partials.alliance", ["alliance"=>$row->corporation->alliance])</td>
-                                        <td data-sort="{{$row->pve_total}}">{{ number_format($row->pve_total, 2) }}</td>
-                                        <td data-sort="{{$row->pve_tax}}">{{ number_format($row->pve_tax,2) }}</td>
-                                    </tr>
-                                @endforeach
-                            @else
+                            @foreach($stats as $row)
                                 <tr>
-                                    <td colspan="4">Нет данных для отображения</td>
+                                    <td>{{ $row->corporation->name ?? 'N/A' }}</td>
+                                    <td>{{ $row->corporation->alliance->name ?? 'N/A' }}</td>
+                                    <td data-sort="{{ $row->pve_total }}">{{ number_format($row->pve_total, 2) }}</td>
+                                    <td data-sort="{{ $row->pve_tax }}">{{ number_format($row->pve_tax, 2) }}</td>
                                 </tr>
-                            @endif
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="4">Нет данных для отображения</td>
+                            </tr>
+                        @endif
                         </tbody>
                     </table>
                 </div>
